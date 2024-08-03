@@ -1,0 +1,70 @@
+{% extends 'mailings/base.html' %}
+
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h3 class="display-1">Страница рассылок</h3>
+</div>
+
+
+<div class="container col-10">
+    <div class="card">
+        <div class="card-header text-center">
+            <h1>Рассылки</h1>
+        </div>
+        <div class="card-body">
+            <div class="col-12 text-center">
+                <table class="table">
+                    <tr>
+                        <th><h4>Дата рассылки</h4></th>
+                        <th><h4>Периодичность рассылки</h4></th>
+                        <th><h4>Статус рассылки</h4></th>
+                        <th><h4>Тема</h4></th>
+
+                        <th><h4>Посмотреть рассылку</h4></th>
+
+                        <th><h4>Редактировать рассылку</h4></th>
+
+                        <th><h4>Удалить рассылку</h4></th>
+
+                    </tr>
+                    {% for object in object_list %}
+                    <tr>
+                        <td><h6>{{ object.start_time }}</h6></td>
+                        <td><h6>{{ object.periodicity }}</h6></td>
+                        <td><h6>{{ object.status }}</h6></td>
+                        <td><h6>{{ object.title }}</h6></td>
+
+                        <td><h6>
+                            {% if perms.mailings.view_all_mailings or user == object.owner or user.is_superuser %}
+                            <a class="btn btn-lg btn-primary"
+                               href="{% url 'mailings:mailingsettings_detail' object.pk %}">Просмотр</a>
+                            {% endif %}
+                        </h6></td>
+
+                        {% if perms.mailings.deactivate_mailing or user == object.owner or user.is_superuser %}
+                        <td><h6>
+                            <a class="btn btn-lg btn-warning"
+                               href="{% url 'mailings:mailingsettings_update' object.pk %}">Редактирование</a>
+                        </h6></td>
+                        {% endif %}
+                        {% if user == object.owner or user.is_superuser %}
+                        <td><h6>
+                            <a class="btn btn-lg btn-danger"
+                               href="{% url 'mailings:mailingsettings_delete' object.pk %}">Удаление</a>
+                        </h6></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="row text-right mt-4">
+        <div class="col-12">
+            <a class="btn btn-secondary my-2" href="{% url 'mailings:mailingsettings_create' %}">Создать рассылку</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

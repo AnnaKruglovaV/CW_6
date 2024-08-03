@@ -1,0 +1,37 @@
+{% extends 'mailings/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="album py-5 bg-body-tertiary" xmlns="http://www.w3.org/1999/html">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="{{ client.image | media_filter }}">
+                    <div class="card-body">
+                        <p class="card-text">{{ object.title|title }}</p>
+                        <p class="card-text">Содержание: {{ object.text }}</p>
+                        <p class="card-text">Начало рассылки: {{ object.start_time }}</p>
+                        <p class="card-text">Окончание рассылки: {{ object.end_time }}</p>
+                        <p class="card-text">Периодичность: {{ object.periodicity }}</p>
+                        <p class="card-text">Статус: {{ object.status }}</p>
+                        <p class="card-text">Клиенты: </p>
+                        {% for client in mailingsettings.client.all %}
+                        <p class="card-text"> {{ client.name }}</p>
+                        {% endfor %}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn btn-primary" href="{% url 'mailings:mailingsettings_list' %}"
+                                   role="button">Вернуться</a>
+                                {% if perms.mailings.deactivate_mailing or user == object.owner or user.is_superuser %}
+                                <a class="btn btn-success" href="{% url 'mailings:mailingsettings_update' object.pk %}"
+                                   role="button">Редактировать</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
