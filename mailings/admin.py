@@ -13,6 +13,7 @@ class ClientAdmin(admin.ModelAdmin):
 class MailingSettingsAdmin(admin.ModelAdmin):
     list_display = ('title', 'periodicity', 'status', 'owner')
     list_filter = ('client', 'title',)
+    list_display_links = ('title', 'periodicity', 'status')
 
 
 @admin.register(Log)

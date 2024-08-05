@@ -56,8 +56,12 @@ class MailingSettings(models.Model):
     end_time = models.DateTimeField(verbose_name='время окончания рассылки')
     periodicity = models.CharField(max_length=50, choices=PERIODICITY_CHOICES, verbose_name='периодичность')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=CREATED, verbose_name='статус')
+
     title = models.CharField(max_length=50, verbose_name='тема')
     text = models.TextField(verbose_name='письмо')
+
+    massage = models.ForeignKey(Message, verbose_name='сообщение', on_delete=models.CASCADE)
+
     client = models.ManyToManyField(Client, verbose_name='клиент')
     owner = models.ForeignKey(User, verbose_name='Владелец', on_delete=models.SET_NULL, **NULLABLE)
 
@@ -74,8 +78,17 @@ class MailingSettings(models.Model):
 
 
 class Log(models.Model):
+    STATUS_SUCCESS = 'SUCCESS'
+    STATUS_ERROR = 'ERROR'
+
+    STATUS_CHOICES = [
+        (STATUS_SUCCESS, 'Успешно'),
+        (STATUS_ERROR, 'Ошибка'),
+    ]
+
     time = models.DateTimeField(verbose_name='дата и время последней попытки', auto_now_add=True)
-    status = models.BooleanField(default=False, verbose_name='статус попытки')
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, verbose_name='статус попытки',
+                              default=STATUS_SUCCESS)
     server_response = models.TextField(default=False, verbose_name='ответ почтового сервера')
 
     mailing_list = models.ForeignKey(MailingSettings, on_delete=models.CASCADE, verbose_name='рассылка')

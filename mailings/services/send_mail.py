@@ -8,7 +8,9 @@ from mailings.models import MailingSettings, Log
 
 
 def send_email(message_settings, message_client):
+    print('Sending email to {}...'.format(message_client.email))
     try:
+        print('Success send email to {}...'.format(message_client.email))
         send_mail(
             subject=message_settings.title,
             message=message_settings.text,
@@ -19,14 +21,15 @@ def send_email(message_settings, message_client):
 
         Log.objects.create(
             time=datetime.datetime.now(datetime.timezone.utc),
-            status="Успешно",
+            status=Log.STATUS_SUCCESS,
             mailing_list=message_settings,
             client=message_client,
         )
     except smtplib.SMTPException as e:
+        print('Failed to send email to {}: {}'.format(message_client.email, str()))
         Log.objects.create(
             time=datetime.datetime.now(datetime.timezone.utc),
-            status="Ошибка",
+            status=Log.STATUS_ERROR,
             server_response=str(e),
             mailing_list=message_settings,
             client=message_client,
