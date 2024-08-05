@@ -19,6 +19,19 @@ class Client(models.Model):
         verbose_name_plural = "клиенты"
 
 
+class Message(models.Model):
+    subject = models.CharField(max_length=100, verbose_name="Тема сообщения")
+    text = models.TextField(verbose_name="Текст сообщения")
+    owner = models.ForeignKey(User, verbose_name='Пользователь', **NULLABLE, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"{self.subject}: {self.text}"
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+
+
 class MailingSettings(models.Model):
     DAILY = "Раз в день"
     WEEKLY = "Раз в неделю"
@@ -62,8 +75,8 @@ class MailingSettings(models.Model):
 
 class Log(models.Model):
     time = models.DateTimeField(verbose_name='дата и время последней попытки', auto_now_add=True)
-    status = models.CharField(max_length=30, verbose_name='статус попытки')
-    server_response = models.CharField(max_length=300, verbose_name='ответ почтового сервера', **NULLABLE)
+    status = models.BooleanField(default=False, verbose_name='статус попытки')
+    server_response = models.TextField(default=False, verbose_name='ответ почтового сервера')
 
     mailing_list = models.ForeignKey(MailingSettings, on_delete=models.CASCADE, verbose_name='рассылка')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='клиент', **NULLABLE)

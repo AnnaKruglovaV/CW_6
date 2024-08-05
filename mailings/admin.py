@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from mailings.models import Client, MailingSettings, Log
+from mailings.models import Client, MailingSettings, Log, Message
 
 
 @admin.register(Client)
@@ -19,3 +19,9 @@ class MailingSettingsAdmin(admin.ModelAdmin):
 class LogAdmin(admin.ModelAdmin):
     list_display = ('time', 'status', 'server_response', 'mailing_list', 'client',)
     list_filter = ('status', 'server_response', 'client',)
+
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('subject', 'text')
+    search_fields = ('subject',)

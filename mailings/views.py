@@ -6,8 +6,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 from blog.services import get_articles_from_cache
-from mailings.forms import MailingSettingsForm, ModeratorMailingSettingsForm
-from mailings.models import Client, MailingSettings, Log
+from mailings.forms import MailingSettingsForm, ModeratorMailingSettingsForm, MessageForm
+from mailings.models import Client, MailingSettings, Log, Message
 
 
 class HomePageView(TemplateView):
@@ -21,7 +21,7 @@ class HomePageView(TemplateView):
         context_data['active_mailings'] = mailings.filter(status=MailingSettings.STARTED).count()
         context_data['active_clients'] = clients.values('email').distinct().count()
 
-#        context_data['random_blogs'] = get_articles_from_cache().order_by('?')[:3]
+        #        context_data['random_blogs'] = get_articles_from_cache().order_by('?')[:3]
         return context_data
 
 
@@ -101,3 +101,28 @@ class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
 
 class LogListView(ListView):
     model = Log
+
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('mailings:mailingsettings_list')
+
+
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    model = Message
+
+
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('mailings:message_list')
+
+
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
+    model = Message
+    success_url = reverse_lazy('mailings:message_list')
